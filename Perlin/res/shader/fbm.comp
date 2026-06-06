@@ -1,0 +1,19 @@
+#version 460 core
+
+#include "fbm.glsl"
+
+#define NOISE_TEX_UNIT 2
+
+// local work group sizes
+layout (local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
+
+// binding of uniform texture refers to texture unit, not buffer target
+layout (rgba32f, binding = NOISE_TEX_UNIT) uniform restrict image2D result;
+
+void main() {
+    ivec2 pixel = ivec2(gl_GlobalInvocationID.xy);
+
+    float colorVal = fbm(vec2(pixel));
+
+    imageStore(result, pixel, vec4(vec3(colorVal), 1));
+}
