@@ -127,7 +127,7 @@ float fbm(in vec2 p) {
     float total = 0.0;
 
     for (int i = 0; i < u_octaves; ++i) {
-        float noiseValue = valueNoise(p * frequency + vec2(u_offset) * frequency);
+        float noiseValue = valueNoise((p + vec2(u_offset) * frequency) * frequency);
         total += noiseValue * amplitude;
         amplitude *= u_persistence;
         frequency *= u_lacunarity;
