@@ -24,7 +24,7 @@ void main(void) {
     texCoord = tex;
 
     if (u_doDisplacement) {
-        pos_ws += normal * texture(u_noiseTex, tex).r * u_heightScale;
+        pos_ws.y += texture(u_noiseTex, tex).r * u_heightScale;
     }
 
     gl_Position = u_mvpMatrix * vec4(pos_ws, 1.0);

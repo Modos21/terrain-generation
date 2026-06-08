@@ -48,6 +48,7 @@ int main(void) {
             scene_draw(input);
             // für GUI immer wireframe aus
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            // ACHTUNG: GUI DEAKTIVIERT DEN DEPTH TEST!!! BEI JEDEM RENDERN NEU AKTIVIEREN
             gui_render(ctx, gui_draw);
         }
 

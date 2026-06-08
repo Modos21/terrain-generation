@@ -132,6 +132,7 @@ void scene_draw(InputData* data) {
 
         camera_setMatrix(g_freeCam);
 
+        glEnable(GL_DEPTH_TEST);
         drawPlane(data);
     }
     scene_popMatrix();
