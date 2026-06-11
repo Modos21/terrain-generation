@@ -141,8 +141,6 @@ void scene_draw(InputData* data) {
         shader_dispatchCompute(data);
 
         if (data->reloadTerrain) {
-            printf("Reloading terrain\n");
-
             shader_computeTerrain(data);
             if (g_terrain) {
                 mesh_deleteVoxelMesh(g_terrain);

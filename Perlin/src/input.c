@@ -67,7 +67,7 @@ void callbackFramebuffer(ProgContext ctx, int width, int height) {
     NK_UNUSED(ctx);
     const float aspect = (float)width / (float)height;
 
-    scene_perspective(45.0f, aspect, 0.1f, 100.0f);
+    scene_perspective(45.0f, aspect, 0.1f, 300.0f);
 
     g_data.windowVisible = (width > 0 && height > 0);
 }
