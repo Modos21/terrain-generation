@@ -23,6 +23,7 @@ static InputData g_data = {
     .windowVisible = true,
     .doDisplacement = false,
     .showNoiseGui = true,
+    .reloadTerrain = true,
 };
 
 static void callbackKeyboard(ProgContext ctx, int key, int action, int mods) {
@@ -48,6 +49,7 @@ static void callbackKeyboard(ProgContext ctx, int key, int action, int mods) {
                 break;
             case GLFW_KEY_R:
                 shader_reload();
+                g_data.reloadTerrain = true;
                 break;
             default:
                 break;

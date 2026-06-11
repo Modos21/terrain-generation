@@ -20,6 +20,7 @@ typedef struct {
     bool windowVisible;
     bool doDisplacement;
     bool showNoiseGui;
+    bool reloadTerrain;
 } InputData;
 
 void input_init(ProgContext ctx);

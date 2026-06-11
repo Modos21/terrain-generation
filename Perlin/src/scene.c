@@ -1,12 +1,14 @@
 #include "scene.h"
 #include "input.h"
 #include "macros.h"
+#include "mesh.h"
 #include "shader.h"
 
 #define TERRAIN_SIZE_XZ 10
 
 static Mesh* g_plane = NULL;
 static Mesh* g_quad = NULL;
+static VoxelMesh *g_terrain = NULL;
 static Camera* g_freeCam = NULL;
 
 static void createPlane(const int res) {
@@ -41,15 +43,13 @@ static void createPlane(const int res) {
             int bottomLeft = topLeft + (res + 1);
             int bottomRight = bottomLeft + 1;
 
-            // Dreieck 1: CCW
             indices[i++] = topLeft;
             indices[i++] = bottomLeft;
             indices[i++] = topRight;
 
-            // Dreieck 2: CCW (bottomRight und bottomLeft geswappt für korrekte Winding Order)
             indices[i++] = topRight;
-            indices[i++] = bottomRight;
             indices[i++] = bottomLeft;
+            indices[i++] = bottomRight;
         }
     }
 
@@ -83,6 +83,23 @@ static void drawPlane(InputData *data) {
     scene_popMatrix();
 }
 
+static void drawTerrain(void) {
+    shader_activateTerrainShader();
+
+    scene_pushMatrix();
+    {
+        mat4 mvp;
+        scene_getMVP(mvp);
+
+        scene_scale(0.1f, 0.1f, 0.1f);
+
+        shader_setMVP(mvp);
+
+        mesh_drawVoxelMesh(g_terrain);
+    }
+    scene_popMatrix();
+}
+
 void scene_init(ProgContext ctx) {
     createPlane(INITIAL_PLANE_RES);
 
@@ -95,7 +112,7 @@ void scene_init(ProgContext ctx) {
 
     GLuint quadIndices[] = {
         0, 1, 2,
-        1, 2, 3
+        1, 3, 2
     };
 
     g_quad = mesh_createMesh(
@@ -110,13 +127,6 @@ void scene_init(ProgContext ctx) {
     int w, h;
     window_getFramebufferSize(ctx, &w, &h);
     callbackFramebuffer(ctx, w, h);
-
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glFrontFace(GL_CCW);
 }
 
 Camera* scene_getCamera(void) {
@@ -130,10 +140,30 @@ void scene_draw(InputData* data) {
     {
         shader_dispatchCompute(data);
 
+        if (data->reloadTerrain) {
+            printf("Reloading terrain\n");
+
+            shader_computeTerrain(data);
+            if (g_terrain) {
+                mesh_deleteVoxelMesh(g_terrain);
+            }
+
+            uint8_t *terrainData = shader_getTerrainData(CHUNK_XZ, CHUNK_Y, CHUNK_XZ);
+            g_terrain = mesh_createVoxelMesh(terrainData, CHUNK_XZ, CHUNK_Y, CHUNK_XZ);
+            free(terrainData);
+        }
+
         camera_setMatrix(g_freeCam);
 
+        // activate OpenGL states right before rendering
+        // to ensure nothing that happens before changes them
         glEnable(GL_DEPTH_TEST);
-        drawPlane(data);
+        glDepthFunc(GL_LESS);
+        //glEnable(GL_CULL_FACE);
+        //glCullFace(GL_BACK);
+
+        drawTerrain();
+        //drawPlane(data);
     }
     scene_popMatrix();
 }
@@ -165,5 +195,10 @@ void scene_cleanup(void) {
     if (g_quad) {
         mesh_disposeMesh(&g_quad);
         g_quad = NULL;
+    }
+
+    if (g_terrain) {
+        mesh_deleteVoxelMesh(g_terrain);
+        g_terrain = NULL;
     }
 }

@@ -1,13 +1,20 @@
 #include "shader.h"
 
+#include "mesh.h"
+
 static Shader* g_noiseShader = NULL;
 static Shader* g_quadShader = NULL;
 static Shader* g_computeShader = NULL;
+static Shader* g_terrainCompShader = NULL;
+static Shader* g_terrainShader = NULL;
 
 static Shader* g_activeShader = NULL;
 
 static GLuint g_computeTexture = 0;
 static ivec3 texture_res = {512, 512, 1};
+
+static GLuint g_terrainTexture = 0;
+static ivec3 terrain_res = {CHUNK_XZ, CHUNK_Y, CHUNK_XZ};
 
 static GLuint createTexture(GLint internalFormat, const ivec2 size) {
     GLuint texId;
@@ -17,6 +24,18 @@ static GLuint createTexture(GLint internalFormat, const ivec2 size) {
 
     glTextureParameteri(texId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTextureParameteri(texId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTextureParameteri(texId, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTextureParameteri(texId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    return texId;
+}
+
+static GLuint createTerrainTexture(int size_x, int size_y, int size_z) {
+    GLuint texId;
+    glCreateTextures(GL_TEXTURE_3D, 1, &texId);
+
+    glTextureStorage3D(texId, 1, GL_R8UI, size_x, size_y, size_z);
+
     glTextureParameteri(texId, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTextureParameteri(texId, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -38,6 +57,13 @@ void shader_init(void) {
         exit(EXIT_FAILURE);
     }
 
+    g_terrainShader = shader_createVeFrShader("Chunk",
+        RESOURCE_PATH "shader/terrain.vert", RESOURCE_PATH "shader/terrain.frag");
+
+    if (!g_terrainShader) {
+        exit(EXIT_FAILURE);
+    }
+
     g_computeShader = shader_createShader();
     shader_attachShaderFile(g_computeShader, GL_COMPUTE_SHADER, RESOURCE_PATH "shader/fbm.comp");
 
@@ -48,6 +74,17 @@ void shader_init(void) {
     g_computeTexture = createTexture(GL_RGBA32F, texture_res);
     glBindTextureUnit(NOISE_TEX_UNIT, g_computeTexture);
     glBindImageTexture(NOISE_TEX_UNIT, g_computeTexture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+
+    g_terrainCompShader = shader_createShader();
+    shader_attachShaderFile(g_terrainCompShader, GL_COMPUTE_SHADER, RESOURCE_PATH "shader/terrain.comp");
+
+    if (!shader_buildShader("Terrain", &g_terrainCompShader)) {
+        exit(EXIT_FAILURE);
+    }
+
+    g_terrainTexture = createTerrainTexture(CHUNK_XZ, CHUNK_Y, CHUNK_XZ);
+    glBindTextureUnit(TERRAIN_TEX_UNIT, g_terrainTexture);
+    glBindImageTexture(TERRAIN_TEX_UNIT, g_terrainTexture, 0, GL_TRUE, 0, GL_WRITE_ONLY, GL_R8UI);
 }
 
 void shader_reload(void) {
@@ -67,12 +104,28 @@ void shader_reload(void) {
         g_quadShader = newQuad;
     }
 
+    Shader *newChunk = shader_createVeFrShader("Chunk",
+        RESOURCE_PATH "shader/terrain.vert", RESOURCE_PATH "shader/terrain.frag");
+
+    if (newChunk) {
+        shader_deleteShader(&g_terrainShader);
+        g_terrainShader = newChunk;
+    }
+
     Shader *newComp = shader_createShader();
     shader_attachShaderFile(newComp, GL_COMPUTE_SHADER, RESOURCE_PATH "shader/fbm.comp");
 
     if (shader_buildShader("Compute", &newComp) && newComp) {
         shader_deleteShader(&g_computeShader);
         g_computeShader = newComp;
+    }
+
+    Shader *newTerrain = shader_createShader();
+    shader_attachShaderFile(newTerrain, GL_COMPUTE_SHADER, RESOURCE_PATH "shader/terrain.comp");
+
+    if (shader_buildShader("Terrain", &newTerrain) && newTerrain) {
+        shader_deleteShader(&g_terrainCompShader);
+        g_terrainCompShader = newTerrain;
     }
 }
 
@@ -84,6 +137,11 @@ void shader_activateNoiseShader(void) {
 void shader_activateQuadShader(void) {
     shader_useShader(g_quadShader);
     g_activeShader = g_quadShader;
+}
+
+void shader_activateTerrainShader(void) {
+    shader_useShader(g_terrainShader);
+    g_activeShader = g_terrainShader;
 }
 
 void shader_setMVP(mat4 mvp) {
@@ -122,6 +180,31 @@ void shader_dispatchCompute(InputData* data) {
     glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
 }
 
+void shader_computeTerrain(InputData *data) {
+    shader_useShader(g_terrainCompShader);
+    shader_setFloat(g_terrainCompShader, "u_persistence", data->persistence);
+    shader_setFloat(g_terrainCompShader, "u_frequency", data->frequency);
+    shader_setFloat(g_terrainCompShader, "u_lacunarity", data->lacunarity);
+    shader_setInt(g_terrainCompShader, "u_octaves", data->octaves);
+    shader_setFloat(g_terrainCompShader, "u_scale", data->scale);
+    shader_setFloat(g_terrainCompShader, "u_amplitude", data->amplitude);
+    shader_setFloat(g_terrainCompShader, "u_offset", data->offsetXY);
+    shader_setInt(g_terrainCompShader, "u_res", terrain_res[0]);
+
+    glDispatchCompute((CHUNK_XZ + 7) / 8, (CHUNK_Y + 7) / 8, (CHUNK_XZ + 7) / 8);
+    glMemoryBarrier(GL_SHADER_STORAGE_BARRIER_BIT | GL_SHADER_IMAGE_ACCESS_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+
+    data->reloadTerrain = false;
+}
+
+uint8_t* shader_getTerrainData(int size_x, int size_y, int size_z) {
+    const GLsizei chunkSize = size_x * size_y * size_z;
+    uint8_t* data = malloc(chunkSize);
+    glBindTextureUnit(TERRAIN_TEX_UNIT, g_terrainTexture);
+    glGetTextureImage(g_terrainTexture, 0, GL_RED_INTEGER, GL_UNSIGNED_BYTE, chunkSize, data);
+    return data;
+}
+
 void shader_cleanup(void) {
     g_activeShader = NULL;
 
@@ -129,9 +212,12 @@ void shader_cleanup(void) {
 
     DELETE_SHADER(g_noiseShader);
     DELETE_SHADER(g_quadShader);
+    DELETE_SHADER(g_terrainShader);
     DELETE_SHADER(g_computeShader);
+    DELETE_SHADER(g_terrainCompShader);
 
 #undef DELETE_SHADER
 
     texture_deleteTexture(&g_computeTexture);
+    texture_deleteTexture(&g_terrainTexture);
 }
