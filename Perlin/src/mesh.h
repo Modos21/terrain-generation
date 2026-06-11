@@ -2,7 +2,7 @@
 
 #include <fhwcg/fhwcg.h>
 
-#define CHUNK_XZ 16
+#define CHUNK_XZ 64
 #define CHUNK_Y 64
 
 typedef struct {

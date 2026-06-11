@@ -1,5 +1,7 @@
 #include "shader.h"
 
+#include <time.h>
+
 #include "mesh.h"
 
 static Shader* g_noiseShader = NULL;
@@ -118,6 +120,8 @@ void shader_reload(void) {
     if (shader_buildShader("Compute", &newComp) && newComp) {
         shader_deleteShader(&g_computeShader);
         g_computeShader = newComp;
+    } else {
+        shader_deleteShader(&newComp);
     }
 
     Shader *newTerrain = shader_createShader();
@@ -126,6 +130,8 @@ void shader_reload(void) {
     if (shader_buildShader("Terrain", &newTerrain) && newTerrain) {
         shader_deleteShader(&g_terrainCompShader);
         g_terrainCompShader = newTerrain;
+    } else {
+        shader_deleteShader(&newTerrain);
     }
 }
 

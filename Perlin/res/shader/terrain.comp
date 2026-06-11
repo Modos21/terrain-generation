@@ -15,10 +15,9 @@ layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 
 layout (r8ui, binding = TERRAIN_TEX_UNIT) uniform uimage3D result;
 
-
 uint getBlock(int x, int y, int z) {
     float surfaceY_f = fbm(vec2(x, z));
-    int surfaceY = int(surfaceY_f) + TERRAIN_OFFSET;
+    int surfaceY = int(floor(surfaceY_f)) + TERRAIN_OFFSET;
 
     if (y > surfaceY) {
         return AIR;

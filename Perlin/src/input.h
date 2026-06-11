@@ -7,6 +7,7 @@ typedef struct {
     int planeDetail;
     // noise data
     int octaves;
+    int chunkSizeXZ;
     float persistence;
     float frequency;
     float lacunarity;
@@ -21,6 +22,7 @@ typedef struct {
     bool doDisplacement;
     bool showNoiseGui;
     bool reloadTerrain;
+    bool renderTerrain;
 } InputData;
 
 void input_init(ProgContext ctx);

@@ -1,5 +1,6 @@
 #include "input.h"
 #include "macros.h"
+#include "mesh.h"
 #include "scene.h"
 #include "shader.h"
 
@@ -10,6 +11,7 @@
 static InputData g_data = {
     .planeColor = {1, 1, 1, 1},
     .planeDetail = INITIAL_PLANE_RES,
+    .chunkSizeXZ = CHUNK_XZ,
     .amplitude = 1.0f,
     .frequency = 1.0f,
     .lacunarity = 2.0f,
@@ -24,6 +26,7 @@ static InputData g_data = {
     .doDisplacement = false,
     .showNoiseGui = true,
     .reloadTerrain = true,
+    .renderTerrain = false,
 };
 
 static void callbackKeyboard(ProgContext ctx, int key, int action, int mods) {
@@ -50,6 +53,9 @@ static void callbackKeyboard(ProgContext ctx, int key, int action, int mods) {
             case GLFW_KEY_R:
                 shader_reload();
                 g_data.reloadTerrain = true;
+                break;
+            case GLFW_KEY_T:
+                TOGGLE(g_data.renderTerrain);
                 break;
             default:
                 break;

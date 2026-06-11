@@ -8,6 +8,7 @@ static const GuiHelpLine g_helpLines[] = {
     {"Toggle wireframe", "F2"},
     {"Toggle fullscreen", "F11"},
     {"Reload Shaders", "R"},
+    {"Toggle between Noise Plane and Terrain", "T"},
     {"Close App", "ESC"}
 };
 
@@ -54,11 +55,13 @@ static void gui_drawControls(ProgContext ctx) {
 
         gui_layoutRowDynamic(ctx, 30, 1);
 
-        int currDetail = input->planeDetail;
-        gui_propertyInt(ctx, "Plane detail", 1, &input->planeDetail, 512, 1, 0.5f);
+        if (!input->renderTerrain) {
+            int currDetail = input->planeDetail;
+            gui_propertyInt(ctx, "Plane detail", 1, &input->planeDetail, 512, 1, 0.5f);
 
-        if (currDetail != input->planeDetail) {
-            scene_updatePlaneRes(input->planeDetail);
+            if (currDetail != input->planeDetail) {
+                scene_updatePlaneRes(input->planeDetail);
+            }
         }
 
         if (gui_treePush(ctx, NK_TREE_TAB, "Noise settings", NK_MAXIMIZED)) {
@@ -92,14 +95,15 @@ static void gui_drawControls(ProgContext ctx) {
             gui_propertyFloat(ctx, "Offset (XY)", 0.0f, &input->offsetXY, 100.0f, 0.1f, 0.1f);
             if (currOffset != input->offsetXY) input->reloadTerrain = true;
 
-            gui_widgetColor(ctx, "Noise color", input->planeColor);
-
-            gui_checkbox(ctx, input->showNoiseGui ? "Hide noise GUI" : "Show noise GUI", &input->showNoiseGui);
+            if (!input->renderTerrain) {
+                gui_widgetColor(ctx, "Noise color", input->planeColor);
+                gui_checkbox(ctx, input->showNoiseGui ? "Hide noise GUI" : "Show noise GUI", &input->showNoiseGui);
+            }
 
             gui_treePop(ctx);
         }
 
-        if (gui_treePush(ctx, NK_TREE_TAB, "Vertex displacement", NK_MAXIMIZED)) {
+        if (!input->renderTerrain && gui_treePush(ctx, NK_TREE_TAB, "Vertex displacement", NK_MAXIMIZED)) {
             gui_layoutRowDynamic(ctx, 30, 1);
 
             gui_checkbox(ctx, "Vertex displacement", &input->doDisplacement);
@@ -150,7 +154,7 @@ void gui_draw(ProgContext ctx) {
         input->showHelp = gui_drawHelp(ctx);
     }
 
-    if (input->showNoiseGui) {
+    if (!input->renderTerrain && input->showNoiseGui) {
         gui_drawNoiseWidget(ctx, input);
     }
 

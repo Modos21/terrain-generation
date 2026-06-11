@@ -162,8 +162,11 @@ void scene_draw(InputData* data) {
         //glEnable(GL_CULL_FACE);
         //glCullFace(GL_BACK);
 
-        drawTerrain();
-        //drawPlane(data);
+        if (data->renderTerrain) {
+            drawTerrain();
+        } else {
+            drawPlane(data);
+        }
     }
     scene_popMatrix();
 }
