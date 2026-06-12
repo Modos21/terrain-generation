@@ -86,7 +86,7 @@ ChunkMesh* mesh_createChunkMesh(const uint8_t* data, int size_x, int size_y, int
                 int *vc = (block == WATER) ? &waterVC : &solidVC;
                 int *ic = (block == WATER) ? &waterIC : &solidIC;
 
-                bool fluidAbove = !IS_FLUID(AT(data, x, y+1, z));
+                bool fluidAbove = IS_FLUID(AT(data, x, y+1, z));
 
                 for (int d = 0; d < 6; d++) {
                     int nx = x + DIRS[d][X];
