@@ -122,7 +122,7 @@ void scene_init(ProgContext ctx) {
         GL_TRIANGLES
     );
 
-    g_freeCam = camera_createCamera(ctx, (vec3){0, 10, 10}, 2.0f, 5.0f, 0.1f, -90, -50);
+    g_freeCam = camera_createCamera(ctx, (vec3){0, 10, 10}, 5.0f, 15.0f, 0.1f, -90, -50);
 
     int w, h;
     window_getFramebufferSize(ctx, &w, &h);

@@ -4,6 +4,8 @@
 #define GRASS 1u
 #define DIRT 2u
 #define STONE 3u
+#define WATER 4u
+#define LAVA 5u
 
 in vec3 vNormal;
 in vec2 vUV;
@@ -16,6 +18,8 @@ vec3 blockColor(uint type) {
         case GRASS: return vec3(0.27, 0.54, 0.15);
         case DIRT : return vec3(0.48, 0.31, 0.18);
         case STONE: return vec3(0.50, 0.50, 0.50);
+        case WATER: return vec3(0.00, 0.00, 0.90);
+        case LAVA : return vec3(0.90, 0.50, 0.00);
         default: return vec3(1.0, 0.0, 1.0);
     }
 }

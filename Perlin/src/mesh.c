@@ -6,6 +6,16 @@
 #define IN_BOUNDS(v, v_max) (v >= 0 && v < v_max)
 
 #define AT(data, x, y, z) data[(z)*CHUNK_XZ*CHUNK_Y + (y)*CHUNK_XZ + (x)]
+#define IS_FLUID(block) (block == WATER || block == LAVA)
+
+enum BlockType {
+    AIR,
+    GRASS,
+    DIRT,
+    STONE,
+    WATER,
+    LAVA
+};
 
 VoxelMesh *mesh_createVoxelMesh(const uint8_t* data, int size_x, int size_y, int size_z) {
     const uint chunkSize = size_x * size_y * size_z;
@@ -22,23 +32,36 @@ VoxelMesh *mesh_createVoxelMesh(const uint8_t* data, int size_x, int size_y, int
 
                 if (block == 0) continue;
 
+                bool fluidAbove = !IS_FLUID(AT(data, x, y+1, z));
+
                 for (int d = 0; d < 6; d++) {
                     int nx = x + DIRS[d][X];
                     int ny = y + DIRS[d][Y];
                     int nz = z + DIRS[d][Z];
 
-                    int neighbor = 0;
+                    int neighbor = AIR;
                     if (IN_BOUNDS(nx, size_x) && IN_BOUNDS(ny, size_y) && IN_BOUNDS(nz, size_z)) {
                         neighbor = AT(data, nx, ny, nz);
                     }
 
-                    if (neighbor != 0) continue;
+                    // only skip solids if there's no fluid next to them to also show the side of the blocks
+                    // because fluids are slightly lower and would expose the skipped sides
+                    if (!IS_FLUID(block) && neighbor != AIR && !IS_FLUID(neighbor)) continue;
+
+                    // only skip fluid faces if there's a fluid above or anything other than air to the sides
+                    if (IS_FLUID(block) && (d == 2 && IS_FLUID(neighbor) || d != 2 && neighbor != AIR)) continue;
+
+                    float blockY = 1.0f;
+                    // if the block is a fluid and there is no fluid above it, make it slightly smaller along Y
+                    if (IS_FLUID(block) && fluidAbove) {
+                       blockY = 0.9f;
+                    }
 
                     for (int v = 0; v < 4; v++) {
                         verts[vertCount + v] = (VoxelVertex){
                             .pos = {
                                 (float)x + FACE_VERTS[d][v][X],
-                                (float)y + FACE_VERTS[d][v][Y],
+                                (float)y + FACE_VERTS[d][v][Y] * blockY,
                                 (float)z + FACE_VERTS[d][v][Z],
                             },
                             .normal = {
