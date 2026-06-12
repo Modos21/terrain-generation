@@ -6,6 +6,8 @@
 #define STONE 3u
 #define WATER 4u
 #define LAVA 5u
+#define SAND 6u
+#define BEDROCK 7u
 
 in vec3 vNormal;
 in vec2 vUV;
@@ -16,14 +18,16 @@ out vec4 fragColor;
 vec4 blockColor(uint type) {
     vec4 color  = vec4(1.0, 0.0, 1.0, 1);
     switch (type) {
-        case GRASS: color = vec4(0.27, 0.54, 0.15, 1.00); break;
-        case DIRT : color = vec4(0.48, 0.31, 0.18, 1.00); break;
-        case STONE: color = vec4(0.50, 0.50, 0.50, 1.00); break;
-        case WATER: color = vec4(0.00, 0.00, 0.90, 0.70); break;
-        case LAVA : color = vec4(0.90, 0.50, 0.00, 1.00); break;
+        case GRASS  : color = vec4(0.27, 0.54, 0.15, 1.00); break;
+        case DIRT   : color = vec4(0.48, 0.31, 0.18, 1.00); break;
+        case STONE  : color = vec4(0.50, 0.50, 0.50, 1.00); break;
+        case WATER  : color = vec4(0.00, 0.00, 0.90, 0.70); break;
+        case LAVA   : color = vec4(0.90, 0.50, 0.00, 1.00); break;
+        case SAND   : color = vec4(0.90, 0.90, 0.60, 1.00); break;
+        case BEDROCK: color = vec4(0.10, 0.10, 0.10, 1.00); break;
         default: break;
     }
-    color.a = 1 - color.a;
+    if (color.a < 1.0) color.a = 1 - color.a;
     return color;
 }
 

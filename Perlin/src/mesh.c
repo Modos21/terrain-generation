@@ -14,7 +14,9 @@ enum BlockType {
     DIRT,
     STONE,
     WATER,
-    LAVA
+    LAVA,
+    SAND,
+    BEDROCK
 };
 
 static VoxelMesh *createVoxelMesh(VoxelVertex *verts, int vertCount, GLuint *indices, int indexCount) {

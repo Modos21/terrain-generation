@@ -34,6 +34,10 @@ float perlin2D(in vec2 v) {
     return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
 }
 
+float perlin2D(in float x, in float z) {
+    return perlin2D(vec2(x, z));
+}
+
 /**
  * Generates layered 2D perlin noise with the result values ranging from -1.0 to 1.0
  */

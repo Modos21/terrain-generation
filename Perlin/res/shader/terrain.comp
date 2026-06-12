@@ -14,6 +14,8 @@
 #define STONE 3u
 #define WATER 4u
 #define LAVA 5u
+#define SAND 6u
+#define BEDROCK 7u
 
 layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 
@@ -26,17 +28,22 @@ uint getBlock(int x, int y, int z) {
     if (y > surfaceY) {
         return (y < WATER_LEVEL) ? WATER : AIR;
     } else if (y == surfaceY) {
-        return (y < WATER_LEVEL - 1) ? DIRT : GRASS;
+        return (y < WATER_LEVEL) ? SAND : GRASS;
     } else if (y > surfaceY - 4) {
         return DIRT;
     } else if (y > surfaceY - 10) {
         return STONE;
     } else {
-        float density = fbm3D(x, y, z);
-        if (density < 0.0) {
-            return (y < LAVA_LEVEL) ? LAVA : AIR;
+        float bedrockY = perlin2D(x * 0.1, z * 0.1) * 3;
+        if (y < int(floor(bedrockY)) + 2) {
+            return BEDROCK;
         } else {
-            return STONE;
+            float density = fbm3D(x, y, z);
+            if (density < 0.0) {
+                return (y < LAVA_LEVEL) ? LAVA : AIR;
+            } else {
+                return STONE;
+            }
         }
     }
 }
