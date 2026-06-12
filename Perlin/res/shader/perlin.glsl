@@ -108,6 +108,10 @@ float perlin3D(in vec3 v) {
     return mix(y0, y1, u.z);
 }
 
+float perlin3D(in float x, in float y, in float z) {
+    return perlin3D(vec3(x, y, z));
+}
+
 float fbm3D(in vec3 v) {
     v /= u_scale;
     v += vec3(u_res / 2);
