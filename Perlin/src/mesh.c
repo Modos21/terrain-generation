@@ -107,7 +107,7 @@ ChunkMesh* mesh_createChunkMesh(const uint8_t* data, int size_x, int size_y, int
 
                     float blockY = 1.0f;
                     // if the block is a fluid and there is no fluid above it, make it slightly smaller along Y
-                    if (IS_FLUID(block) && fluidAbove) {
+                    if (IS_FLUID(block) && !fluidAbove) {
                        blockY = 0.9f;
                     }
 
