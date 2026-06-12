@@ -78,6 +78,7 @@ vec3 grad3D(in ivec3 v) {
 }
 
 float perlin3D(in vec3 v) {
+    v /= 10;
     ivec3 i = ivec3(floor(v));
     vec3  f = fract(v);
 

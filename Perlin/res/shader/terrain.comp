@@ -40,8 +40,8 @@ uint getBlock(int x, int y, int z) {
         float bedrockY = perlin2D(x * 0.1, z * 0.1) * 3;
         if (y < floor(bedrockY) + 3) return BEDROCK;
 
-        float density = perlin3D(x * 0.1, y * 0.1, z * 0.1);
-        if (density < 0.1) {
+        float density = perlin3D(vec3(x, y, z));
+        if (density < 0.0) {
             return (y < LAVA_LEVEL) ? LAVA : AIR;
         } else {
             return STONE;
