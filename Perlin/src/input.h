@@ -23,6 +23,7 @@ typedef struct {
     bool showNoiseGui;
     bool reloadTerrain;
     bool renderTerrain;
+    bool liveUpdate;
 } InputData;
 
 void input_init(ProgContext ctx);

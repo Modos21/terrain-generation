@@ -27,6 +27,7 @@ static InputData g_data = {
     .showNoiseGui = true,
     .reloadTerrain = true,
     .renderTerrain = false,
+    .liveUpdate = true,
 };
 
 static void callbackKeyboard(ProgContext ctx, int key, int action, int mods) {
@@ -56,6 +57,9 @@ static void callbackKeyboard(ProgContext ctx, int key, int action, int mods) {
                 break;
             case GLFW_KEY_T:
                 TOGGLE(g_data.renderTerrain);
+                break;
+            case GLFW_KEY_U:
+                TOGGLE(g_data.liveUpdate);
                 break;
             default:
                 break;

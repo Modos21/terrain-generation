@@ -9,6 +9,7 @@ static const GuiHelpLine g_helpLines[] = {
     {"Toggle fullscreen", "F11"},
     {"Reload Shaders", "R"},
     {"Toggle between Noise Plane and Terrain", "T"},
+    {"Toggle live updating of terrain", "U"},
     {"Close App", "ESC"}
 };
 
@@ -69,35 +70,37 @@ static void gui_drawControls(ProgContext ctx) {
 
             int currOctaves = input->octaves;
             gui_propertyInt(ctx, "Octaves", 1, &input->octaves, 10, 1, 0.5f);
-            if (currOctaves != input->octaves) input->reloadTerrain = true;
+            if (input->liveUpdate && currOctaves != input->octaves) input->reloadTerrain = true;
 
             float currAmpl = input->amplitude;
             gui_propertyFloat(ctx, "Amplitude", 0.0f, &input->amplitude, 50.0f, 0.1f, 0.01f);
-            if (currAmpl != input->amplitude) input->reloadTerrain = true;
+            if (input->liveUpdate && currAmpl != input->amplitude) input->reloadTerrain = true;
 
             float currFreq = input->frequency;
             gui_propertyFloat(ctx, "Frequency", 0.01f, &input->frequency, 50.0f, 0.01f, 0.01f);
-            if (currFreq != input->frequency) input->reloadTerrain = true;
+            if (input->liveUpdate && currFreq != input->frequency) input->reloadTerrain = true;
 
             float currScale = input->scale;
             gui_propertyFloat(ctx, "Scale", 0.1f, &input->scale, 100.0f, 0.1f, 0.1f);
-            if (currScale != input->scale) input->reloadTerrain = true;
+            if (input->liveUpdate && currScale != input->scale) input->reloadTerrain = true;
 
             float currPers = input->persistence;
             gui_propertyFloat(ctx, "Persistence", 0.0f, &input->persistence, 1.0f, 0.01f, 0.001f);
-            if (currPers != input->persistence) input->reloadTerrain = true;
+            if (input->liveUpdate && currPers != input->persistence) input->reloadTerrain = true;
 
             float currLacu = input->lacunarity;
             gui_propertyFloat(ctx, "Lacunarity", 1.0f, &input->lacunarity, 10.0f, 0.1f, 0.01f);
-            if (currLacu != input->lacunarity) input->reloadTerrain = true;
+            if (input->liveUpdate && currLacu != input->lacunarity) input->reloadTerrain = true;
 
             float currOffset = input->offsetXY;
             gui_propertyFloat(ctx, "Offset (XY)", 0.0f, &input->offsetXY, 100.0f, 0.1f, 0.1f);
-            if (currOffset != input->offsetXY) input->reloadTerrain = true;
+            if (input->liveUpdate && currOffset != input->offsetXY) input->reloadTerrain = true;
 
             if (!input->renderTerrain) {
                 gui_widgetColor(ctx, "Noise color", input->planeColor);
                 gui_checkbox(ctx, input->showNoiseGui ? "Hide noise GUI" : "Show noise GUI", &input->showNoiseGui);
+            } else {
+                gui_checkbox(ctx, input->liveUpdate ? "Live update: ON" : "Live update: OFF", &input->liveUpdate);
             }
 
             gui_treePop(ctx);

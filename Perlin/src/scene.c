@@ -8,7 +8,7 @@
 
 static Mesh* g_plane = NULL;
 static Mesh* g_quad = NULL;
-static VoxelMesh *g_terrain = NULL;
+static ChunkMesh *g_terrain = NULL;
 static Camera* g_freeCam = NULL;
 
 static void createPlane(const int res) {
@@ -95,7 +95,7 @@ static void drawTerrain(void) {
 
         shader_setMVP(mvp);
 
-        mesh_drawVoxelMesh(g_terrain);
+        mesh_drawChunkMesh(g_terrain);
     }
     scene_popMatrix();
 }
@@ -143,11 +143,11 @@ void scene_draw(InputData* data) {
         if (data->reloadTerrain) {
             shader_computeTerrain(data);
             if (g_terrain) {
-                mesh_deleteVoxelMesh(g_terrain);
+                mesh_deleteChunkMesh(g_terrain);
             }
 
             uint8_t *terrainData = shader_getTerrainData(CHUNK_XZ, CHUNK_Y, CHUNK_XZ);
-            g_terrain = mesh_createVoxelMesh(terrainData, CHUNK_XZ, CHUNK_Y, CHUNK_XZ);
+            g_terrain = mesh_createChunkMesh(terrainData, CHUNK_XZ, CHUNK_Y, CHUNK_XZ);
             free(terrainData);
         }
 
@@ -157,8 +157,11 @@ void scene_draw(InputData* data) {
         // to ensure nothing that happens before changes them
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
-        //glEnable(GL_CULL_FACE);
-        //glCullFace(GL_BACK);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         if (data->renderTerrain) {
             drawTerrain();
@@ -199,7 +202,7 @@ void scene_cleanup(void) {
     }
 
     if (g_terrain) {
-        mesh_deleteVoxelMesh(g_terrain);
+        mesh_deleteChunkMesh(g_terrain);
         g_terrain = NULL;
     }
 }

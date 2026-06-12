@@ -18,6 +18,11 @@ typedef struct {
     GLsizei indexCount;
 } VoxelMesh;
 
+typedef struct {
+    VoxelMesh *solidTerrain;
+    VoxelMesh *waterTerrain;
+} ChunkMesh;
+
 #define VV(type, x, y, z, nx, ny, nz, u, v) (VoxelVertex){.pos = {x,y,z}, .normal = {nx,ny,nz}, .texCoord= {u,v}, .type = type}
 
 static const int DIRS[6][3] = {
@@ -48,8 +53,12 @@ static const float FACE_UVS[4][2] = {
     {0,0},{0,1},{1,1},{1,0}
 };
 
-VoxelMesh *mesh_createVoxelMesh(const uint8_t *data, int size_x, int size_y, int size_z);
+ChunkMesh* mesh_createChunkMesh(const uint8_t* data, int size_x, int size_y, int size_z);
 
 void mesh_drawVoxelMesh(VoxelMesh *mesh);
 
+void mesh_drawChunkMesh(ChunkMesh * mesh);
+
 void mesh_deleteVoxelMesh(VoxelMesh *mesh);
+
+void mesh_deleteChunkMesh(ChunkMesh *mesh);

@@ -26,7 +26,7 @@ uint getBlock(int x, int y, int z) {
     if (y > surfaceY) {
         return (y < WATER_LEVEL) ? WATER : AIR;
     } else if (y == surfaceY) {
-        return GRASS;
+        return (y < WATER_LEVEL - 1) ? DIRT : GRASS;
     } else if (y > surfaceY - 4) {
         return DIRT;
     } else if (y > surfaceY - 10) {
