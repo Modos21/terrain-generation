@@ -78,7 +78,7 @@ ChunkMesh* mesh_createChunkMesh(const uint8_t* data, int size_x, int size_y, int
             for (int x = 0; x < size_x; x++) {
                 uint8_t block = AT(data, x, y, z);
 
-                if (block == 0) continue;
+                if (block == AIR) continue;
 
                 // choose buffer for block
                 VoxelVertex *vbuf = (block == WATER) ? waterVerts : solidVerts;
