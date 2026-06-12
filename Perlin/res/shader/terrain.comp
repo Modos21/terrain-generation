@@ -22,32 +22,32 @@ layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 layout (r8ui, binding = TERRAIN_TEX_UNIT) uniform uimage3D result;
 
 uint getBlock(int x, int y, int z) {
-    float surfaceY_f = fbm2D(x, z);
-
-    int surfaceY = int(floor(surfaceY_f)) + TERRAIN_OFFSET;
-    if (y > surfaceY) {
+    float terrainY = fbm2D(x, z) + TERRAIN_OFFSET;
+    int terrainY_int = int(floor(terrainY));
+    if (y > terrainY_int) {
         return (y < WATER_LEVEL) ? WATER : AIR;
-    } else if (y == surfaceY) {
-        return (y < WATER_LEVEL) ? SAND : GRASS;
-    } else if (y > surfaceY - 4) {
+    } else if (y == terrainY_int) {
+        if (y >= WATER_LEVEL) {
+            return GRASS;
+        } else {
+            return (y > WATER_LEVEL - 2) ? SAND : DIRT;
+        }
+    } else if (y > terrainY_int - 4) {
         return DIRT;
-    } else if (y > surfaceY - 10) {
+    } else if (y > terrainY_int - 10) {
         return STONE;
     } else {
         float bedrockY = perlin2D(x * 0.1, z * 0.1) * 3;
-        if (y < int(floor(bedrockY)) + 2) {
-            return BEDROCK;
+        if (y < floor(bedrockY) + 3) return BEDROCK;
+
+        float density = perlin3D(x * 0.1, y * 0.1, z * 0.1);
+        if (density < 0.1) {
+            return (y < LAVA_LEVEL) ? LAVA : AIR;
         } else {
-            float density = fbm3D(x, y, z);
-            if (density < 0.0) {
-                return (y < LAVA_LEVEL) ? LAVA : AIR;
-            } else {
-                return STONE;
-            }
+            return STONE;
         }
     }
 }
-
 
 void main() {
     ivec3 pos = ivec3(gl_GlobalInvocationID);
