@@ -96,6 +96,8 @@ void shader_reload(void) {
     if (newNoise) {
         shader_deleteShader(&g_noiseShader);
         g_noiseShader = newNoise;
+    } else {
+        shader_deleteShader(&newNoise);
     }
 
     Shader *newQuad = shader_createVeFrShader("Noise Quad",
@@ -104,6 +106,8 @@ void shader_reload(void) {
     if (newQuad) {
         shader_deleteShader(&g_quadShader);
         g_quadShader = newQuad;
+    } else {
+        shader_deleteShader(&newQuad);
     }
 
     Shader *newChunk = shader_createVeFrShader("Chunk",
@@ -112,6 +116,8 @@ void shader_reload(void) {
     if (newChunk) {
         shader_deleteShader(&g_terrainShader);
         g_terrainShader = newChunk;
+    } else {
+        shader_deleteShader(&newChunk);
     }
 
     Shader *newComp = shader_createShader();
