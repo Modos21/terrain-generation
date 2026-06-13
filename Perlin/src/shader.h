@@ -7,6 +7,22 @@
 #define NOISE_TEX_UNIT 2
 #define TERRAIN_TEX_UNIT 3
 
+#define VOXEL_TEX_UNIT 4
+
+typedef enum {
+    TEX_STONE,
+    TEX_GRASS,
+    TEX_GRASS_SIDE,
+    TEX_DIRT,
+    TEX_SAND,
+    TEX_WATER,
+    TEX_LAVA,
+    TEX_BEDROCK,
+    TEX_COUNT
+} VoxelTexture;
+
+inline int voxelTexUnit(VoxelTexture tex) { return VOXEL_TEX_UNIT + tex; }
+
 void shader_init(void);
 
 void shader_activateSceneShader(void);

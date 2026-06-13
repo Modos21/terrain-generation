@@ -1,0 +1,9 @@
+#define AIR        0u
+#define GRASS      1u
+#define GRASS_SIDE 2u
+#define DIRT       3u
+#define STONE      4u
+#define WATER      5u
+#define LAVA       6u
+#define SAND       7u
+#define BEDROCK    8u

@@ -8,9 +8,14 @@
 #define AT(data, x, y, z) data[(z)*CHUNK_XZ*CHUNK_Y + (y)*CHUNK_XZ + (x)]
 #define IS_FLUID(block) (block == WATER || block == LAVA)
 
+/**
+ * Must be the exact same order as in the shader!
+ * (until I find out how to link them cleanly)
+ */
 enum BlockType {
     AIR,
     GRASS,
+    GRASS_SIDE,
     DIRT,
     STONE,
     WATER,
@@ -111,6 +116,24 @@ ChunkMesh* mesh_createChunkMesh(const uint8_t* data, int size_x, int size_y, int
                        blockY = 0.9f;
                     }
 
+                    uint8_t sideType = block;
+
+                    if (block == GRASS) {
+                        switch (d) {
+                            case 0:
+                            case 1:
+                            case 4:
+                            case 5:
+                                sideType = GRASS_SIDE;
+                                break;
+                            case 3:
+                                sideType = DIRT;
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+
                     for (int v = 0; v < 4; v++) {
                         vbuf[*vc + v] = (VoxelVertex){
                             .pos = {
@@ -127,7 +150,7 @@ ChunkMesh* mesh_createChunkMesh(const uint8_t* data, int size_x, int size_y, int
                                 FACE_UVS[v][0],
                                 FACE_UVS[v][1],
                             },
-                            .type = block
+                            .type = sideType
                         };
                     }
                     // 2 triangles (6 indices) from 4 verts
