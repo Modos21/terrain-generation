@@ -39,22 +39,6 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Pfad zu den Bibliotheken
 set(LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../lib)
 
-################################# CLion ######################################
-
-option(USING_CLION "Ob das Programm mit Clion gebaut wurde" OFF)
-
-function(clion_resource_path target rel_path)
-    if(USING_CLION)
-        if (CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-            set(path "../res/")
-        else()
-            set(path "${rel_path}")
-        endif()
-
-        target_compile_definitions(${target} PRIVATE RESOURCE_PATH=\"${path}\")
-    endif()
-endfunction()
-
 ################################# OpenGL ######################################
 
 # OpenGL muss auf dem System vorhanden sein

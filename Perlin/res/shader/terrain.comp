@@ -30,7 +30,7 @@ uint getBlock(int x, int y, int z) {
         if (y >= WATER_LEVEL) {
             return GRASS;
         } else {
-            return (y > WATER_LEVEL - 2) ? SAND : DIRT;
+            return (y > WATER_LEVEL - 3) ? SAND : DIRT;
         }
     } else if (y > terrainY_int - 4) {
         return DIRT;
