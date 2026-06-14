@@ -55,6 +55,8 @@ static const float FACE_UVS[4][2] = {
 
 ChunkMesh* mesh_createChunkMesh(const uint8_t* data, int size_x, int size_y, int size_z);
 
+Mesh *mesh_createPlane(const int res);
+
 void mesh_drawVoxelMesh(VoxelMesh *mesh);
 
 void mesh_drawChunkMesh(ChunkMesh * mesh);

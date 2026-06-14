@@ -4,67 +4,17 @@
 #include "mesh.h"
 #include "shader.h"
 
-#define TERRAIN_SIZE_XZ 10
-
 static Mesh* g_plane = NULL;
 static Mesh* g_quad = NULL;
 static ChunkMesh *g_terrain = NULL;
 static Camera* g_freeCam = NULL;
-
-static void createPlane(const int res) {
-    const int numVertices = (res + 1) * (res + 1);
-    const int numIndices = res * res * 6;
-
-    Vertex* vertices = malloc(sizeof(Vertex) * numVertices);
-    GLuint* indices = malloc(sizeof(GLuint) * numIndices);
-
-    // Vertex-Erzeugung
-    for (int z = 0; z <= res; ++z) {
-        for (int x = 0; x <= res; ++x) {
-            float fx = ((float)x / (float)res - 0.5f) * TERRAIN_SIZE_XZ;
-            float fz = ((float)z / (float)res - 0.5f) * TERRAIN_SIZE_XZ;
-
-            int index = z * (res + 1) + x;
-            vertices[index] = Vertex3Tex(
-                fx, 0.0f, fz,
-                0.0f, 1.0f, 0.0f,
-                (float) x / res,
-                (float) z / res
-            );
-        }
-    }
-
-    // Index-Erzeugung (2 Dreiecke pro Quad)
-    int i = 0;
-    for (int z = 0; z < res; ++z) {
-        for (int x = 0; x < res; ++x) {
-            int topLeft = z * (res + 1) + x;
-            int topRight = topLeft + 1;
-            int bottomLeft = topLeft + (res + 1);
-            int bottomRight = bottomLeft + 1;
-
-            indices[i++] = topLeft;
-            indices[i++] = bottomLeft;
-            indices[i++] = topRight;
-
-            indices[i++] = topRight;
-            indices[i++] = bottomLeft;
-            indices[i++] = bottomRight;
-        }
-    }
-
-    g_plane = mesh_createMesh("Plane", vertices, numVertices, indices, numIndices, GL_TRIANGLES);
-
-    free(vertices);
-    free(indices);
-}
 
 void scene_updatePlaneRes(int newRes) {
     if (g_plane) {
         mesh_disposeMesh(&g_plane);
         g_plane = NULL;
     }
-    createPlane(newRes);
+    g_plane = mesh_createPlane(newRes);
 }
 
 static void drawPlane(InputData *data) {
@@ -101,7 +51,7 @@ static void drawTerrain(void) {
 }
 
 void scene_init(ProgContext ctx) {
-    createPlane(INITIAL_PLANE_RES);
+    g_plane = mesh_createPlane(INITIAL_PLANE_RES);
 
     Vertex quadVerts[] = {
         Vertex3Tex(0, 0, 0, 0, 0, 1, 0, 0),

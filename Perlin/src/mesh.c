@@ -1,5 +1,7 @@
 #include "mesh.h"
 
+#define PLANE_SCALE 10
+
 #define X 0
 #define Y 1
 #define Z 2
@@ -170,6 +172,56 @@ ChunkMesh* mesh_createChunkMesh(const uint8_t* data, int size_x, int size_y, int
     free(waterVerts); free(waterIdxs);
 
     return mesh;
+}
+
+Mesh* mesh_createPlane(const int res) {
+    const int numVertices = (res + 1) * (res + 1);
+    const int numIndices = res * res * 6;
+
+    Vertex* vertices = malloc(sizeof(Vertex) * numVertices);
+    GLuint* indices = malloc(sizeof(GLuint) * numIndices);
+
+    // Vertex-Erzeugung
+    for (int z = 0; z <= res; ++z) {
+        for (int x = 0; x <= res; ++x) {
+            float fx = ((float)x / (float)res - 0.5f) * PLANE_SCALE;
+            float fz = ((float)z / (float)res - 0.5f) * PLANE_SCALE;
+
+            int index = z * (res + 1) + x;
+            vertices[index] = Vertex3Tex(
+                fx, 0.0f, fz,
+                0.0f, 1.0f, 0.0f,
+                (float) x / res,
+                (float) z / res
+            );
+        }
+    }
+
+    // Index-Erzeugung (2 Dreiecke pro Quad)
+    int i = 0;
+    for (int z = 0; z < res; ++z) {
+        for (int x = 0; x < res; ++x) {
+            int topLeft = z * (res + 1) + x;
+            int topRight = topLeft + 1;
+            int bottomLeft = topLeft + (res + 1);
+            int bottomRight = bottomLeft + 1;
+
+            indices[i++] = topLeft;
+            indices[i++] = bottomLeft;
+            indices[i++] = topRight;
+
+            indices[i++] = topRight;
+            indices[i++] = bottomLeft;
+            indices[i++] = bottomRight;
+        }
+    }
+
+    Mesh *m = mesh_createMesh("Plane", vertices, numVertices, indices, numIndices, GL_TRIANGLES);
+
+    free(vertices);
+    free(indices);
+
+    return m;
 }
 
 void mesh_drawVoxelMesh(VoxelMesh* mesh) {
