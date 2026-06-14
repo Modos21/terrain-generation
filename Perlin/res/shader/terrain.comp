@@ -32,20 +32,30 @@ uint getBlock(int x, int y, int z) {
         float bedrockY = perlin2D(x * 0.1, z * 0.1) * 3;
         if (y < floor(bedrockY) + 3) return BEDROCK;
 
+        int deepslateY = int(floor(perlin2D(vec2(x,z) * 0.2) * 3)) + 20;
         float density = perlin3D(vec3(x, y, z));
+
         if (density < 0.0) {
             return (y < LAVA_LEVEL) ? LAVA : AIR;
         } else {
             float ironNoise = perlin3D(4 * vec3(x + 10, y - 20, z + 13)) * 0.35;
 
-            if (y < 25 && ironNoise < -0.1 && ironNoise > -0.15) {
-              return IRON_ORE;
+            if (y < 30 && ironNoise < -0.1 && ironNoise > -0.15) {
+                return (y < deepslateY) ? DS_IRON_ORE : IRON_ORE;
             } else {
                 float diamondNoise = perlin3D(3 * vec3(x, y, z)) * 0.3;
-                return (y < 10 && diamondNoise > 0.1) ? DIAMOND_ORE : STONE;
+                if (y < 25 && diamondNoise > 0.15) {
+                    return (y < deepslateY) ? DS_DIAMOND_ORE : DIAMOND_ORE;
+                } else {
+                    return (y < deepslateY) ? DEEPSLATE : STONE;
+                }
             }
         }
     }
+}
+
+uint getBlockX(int x, int y, int z) {
+    return DS_IRON_ORE;
 }
 
 void main() {

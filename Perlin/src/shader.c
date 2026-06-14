@@ -65,6 +65,10 @@ static void loadVoxelTextures(void) {
     loadTexture2D(TEX_BEDROCK, RESOURCE_PATH "tex/bedrock.png");
     loadTexture2D(TEX_IRON_ORE, RESOURCE_PATH "tex/iron_ore.png");
     loadTexture2D(TEX_DIAMOND_ORE, RESOURCE_PATH "tex/diamond_ore.png");
+    loadTexture2D(TEX_DEEPSLATE_TOP, RESOURCE_PATH "tex/deepslate_top.png");
+    loadTexture2D(TEX_DEEPSLATE, RESOURCE_PATH "tex/deepslate.png");
+    loadTexture2D(TEX_DEEPSLATE_IRON, RESOURCE_PATH "tex/deepslate_iron_ore.png");
+    loadTexture2D(TEX_DEEPSLATE_DIAMOND, RESOURCE_PATH "tex/deepslate_diamond_ore.png");
 }
 
 static void uploadVoxelTextures(void) {
@@ -80,6 +84,10 @@ static void uploadVoxelTextures(void) {
     shader_setInt(g_terrainShader, "u_texBedrock", voxelTexUnit(TEX_BEDROCK));
     shader_setInt(g_terrainShader, "u_texIronOre", voxelTexUnit(TEX_IRON_ORE));
     shader_setInt(g_terrainShader, "u_texDiamondOre", voxelTexUnit(TEX_DIAMOND_ORE));
+    shader_setInt(g_terrainShader, "u_texDeepslateTop", voxelTexUnit(TEX_DEEPSLATE_TOP));
+    shader_setInt(g_terrainShader, "u_texDeepslate", voxelTexUnit(TEX_DEEPSLATE));
+    shader_setInt(g_terrainShader, "u_texDeepslateIronOre", voxelTexUnit(TEX_DEEPSLATE_IRON));
+    shader_setInt(g_terrainShader, "u_texDeepslateDiamondOre", voxelTexUnit(TEX_DEEPSLATE_DIAMOND));
 }
 
 void shader_init(void) {

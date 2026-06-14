@@ -9,3 +9,7 @@
 #define BEDROCK 8u
 #define IRON_ORE 9u
 #define DIAMOND_ORE 10u
+#define DEEPSLATE_TOP 11u
+#define DEEPSLATE 12u
+#define DS_IRON_ORE 13u
+#define DS_DIAMOND_ORE 14u

@@ -21,7 +21,11 @@ enum BlockType {
     WATER,
     LAVA,
     SAND,
-    BEDROCK
+    BEDROCK,
+    DEEPSLATE_TOP,
+    DEEPSLATE,
+    DS_IRON_ORE,
+    DS_DIAMOND_ORE,
 };
 
 static VoxelMesh *createVoxelMesh(VoxelVertex *verts, int vertCount, GLuint *indices, int indexCount) {
@@ -118,20 +122,10 @@ ChunkMesh* mesh_createChunkMesh(const uint8_t* data, int size_x, int size_y, int
 
                     uint8_t sideType = block;
 
-                    if (block == GRASS) {
-                        switch (d) {
-                            case 0:
-                            case 1:
-                            case 4:
-                            case 5:
-                                sideType = GRASS_SIDE;
-                                break;
-                            case 3:
-                                sideType = DIRT;
-                                break;
-                            default:
-                                break;
-                        }
+                    if (block == GRASS && d != 2) {
+                        sideType = (d == 3) ? DIRT : GRASS_SIDE;
+                    } else if (block == DEEPSLATE && (d == 2 || d == 3)) {
+                        sideType = DEEPSLATE_TOP;
                     }
 
                     for (int v = 0; v < 4; v++) {

@@ -20,6 +20,10 @@ typedef enum {
     TEX_BEDROCK,
     TEX_IRON_ORE,
     TEX_DIAMOND_ORE,
+    TEX_DEEPSLATE_TOP,
+    TEX_DEEPSLATE,
+    TEX_DEEPSLATE_IRON,
+    TEX_DEEPSLATE_DIAMOND,
     TEX_COUNT,
 } VoxelTexture;
 

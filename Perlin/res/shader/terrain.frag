@@ -16,6 +16,10 @@ uniform sampler2D u_texLava;
 uniform sampler2D u_texBedrock;
 uniform sampler2D u_texIronOre;
 uniform sampler2D u_texDiamondOre;
+uniform sampler2D u_texDeepslateTop;
+uniform sampler2D u_texDeepslate;
+uniform sampler2D u_texDeepslateIronOre;
+uniform sampler2D u_texDeepslateDiamondOre;
 
 out vec4 fragColor;
 
@@ -23,16 +27,20 @@ vec4 blockTexture(uint type) {
     vec4 color  = vec4(1.0, 0.0, 1.0, 1);
     // stone and bedrock tex are grayscale, so we only need the R channel then copy it to all 3 color channels
     switch (type) {
-        case GRASS      : color = vec4(texture(u_texGrass, vUV).rgb, 1.0); break;
-        case GRASS_SIDE : color = vec4(texture(u_texGrassSide, vUV).rgb, 1.0); break;
-        case DIRT       : color = vec4(texture(u_texDirt, vUV).rgb, 1.0); break;
-        case STONE      : color = vec4(vec3(texture(u_texStone, vUV).r), 1.0); break;
-        case WATER      : color = vec4(texture(u_texWater, vUV).rgb, 0.3); break;
-        case LAVA       : color = vec4(texture(u_texLava, vUV).rgb, 1.0); break;
-        case SAND       : color = vec4(texture(u_texSand, vUV).rgb, 1.0); break;
-        case BEDROCK    : color = vec4(vec3(texture(u_texBedrock, vUV).r), 1.0); break;
-        case IRON_ORE   : color = vec4(texture(u_texIronOre, vUV).rgb, 1.0); break;
-        case DIAMOND_ORE: color = vec4(texture(u_texDiamondOre, vUV).rgb, 1.0); break;
+        case GRASS         : color = vec4(texture(u_texGrass, vUV).rgb, 1.0); break;
+        case GRASS_SIDE    : color = vec4(texture(u_texGrassSide, vUV).rgb, 1.0); break;
+        case DIRT          : color = vec4(texture(u_texDirt, vUV).rgb, 1.0); break;
+        case STONE         : color = vec4(vec3(texture(u_texStone, vUV).r), 1.0); break;
+        case WATER         : color = vec4(texture(u_texWater, vUV).rgb, 0.3); break;
+        case LAVA          : color = vec4(texture(u_texLava, vUV).rgb, 1.0); break;
+        case SAND          : color = vec4(texture(u_texSand, vUV).rgb, 1.0); break;
+        case BEDROCK       : color = vec4(vec3(texture(u_texBedrock, vUV).r), 1.0); break;
+        case IRON_ORE      : color = vec4(texture(u_texIronOre, vUV).rgb, 1.0); break;
+        case DIAMOND_ORE   : color = vec4(texture(u_texDiamondOre, vUV).rgb, 1.0); break;
+        case DEEPSLATE_TOP : color = vec4(texture(u_texDeepslateTop, vUV).rgb, 1.0); break;
+        case DEEPSLATE     : color = vec4(texture(u_texDeepslate, vUV).rgb, 1.0); break;
+        case DS_IRON_ORE   : color = vec4(texture(u_texDeepslateIronOre, vUV).rgb, 1.0); break;
+        case DS_DIAMOND_ORE: color = vec4(texture(u_texDeepslateDiamondOre, vUV).rgb, 1.0); break;
         default: break;
     }
     return color;
