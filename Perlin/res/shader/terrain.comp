@@ -14,32 +14,38 @@ layout (local_size_x = 8, local_size_y = 8, local_size_z = 8) in;
 layout (r8ui, binding = TERRAIN_TEX_UNIT) uniform uimage3D result;
 
 uint getBlock(int x, int y, int z) {
-    //float terrainY = fbm2D(x, z) + TERRAIN_OFFSET;
-    //int terrainY_int = int(floor(terrainY));
-    //if (y > terrainY_int) {
-    //    return (y < WATER_LEVEL) ? WATER : AIR;
-    //} else if (y == terrainY_int) {
-    //    if (y >= WATER_LEVEL) {
-    //        return GRASS;
-    //    } else {
-    //        return (y > WATER_LEVEL - 3) ? SAND : DIRT;
-    //    }
-    //} else if (y > terrainY_int - 4) {
-    //    return DIRT;
-    //} else if (y > terrainY_int - 10) {
-    //    return STONE;
-    //} else {
-    //    float bedrockY = perlin2D(x * 0.1, z * 0.1) * 3;
-    //    if (y < floor(bedrockY) + 3) return BEDROCK;
-//
-    //    float density = perlin3D(vec3(x, y, z));
-    //    if (density < 0.0) {
-    //        return (y < LAVA_LEVEL) ? LAVA : AIR;
-    //    } else {
-    //        return STONE;
-    //    }
-    //}
-    return (y < 1 && x < 1 && z < 1) ? GRASS : AIR;
+    float terrainY = fbm2D(x, z) + TERRAIN_OFFSET;
+    int terrainY_int = int(floor(terrainY));
+    if (y > terrainY_int) {
+        return (y < WATER_LEVEL) ? WATER : AIR;
+    } else if (y == terrainY_int) {
+        if (y >= WATER_LEVEL) {
+            return GRASS;
+        } else {
+            return (y > WATER_LEVEL - 3) ? SAND : DIRT;
+        }
+    } else if (y > terrainY_int - 4) {
+        return DIRT;
+    } else if (y > terrainY_int - 10) {
+        return STONE;
+    } else {
+        float bedrockY = perlin2D(x * 0.1, z * 0.1) * 3;
+        if (y < floor(bedrockY) + 3) return BEDROCK;
+
+        float density = perlin3D(vec3(x, y, z));
+        if (density < 0.0) {
+            return (y < LAVA_LEVEL) ? LAVA : AIR;
+        } else {
+            float ironNoise = perlin3D(4 * vec3(x + 10, y - 20, z + 13)) * 0.35;
+
+            if (y < 25 && ironNoise < -0.1 && ironNoise > -0.15) {
+              return IRON_ORE;
+            } else {
+                float diamondNoise = perlin3D(3 * vec3(x, y, z)) * 0.3;
+                return (y < 10 && diamondNoise > 0.1) ? DIAMOND_ORE : STONE;
+            }
+        }
+    }
 }
 
 void main() {

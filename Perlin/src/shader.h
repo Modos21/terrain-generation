@@ -18,7 +18,9 @@ typedef enum {
     TEX_WATER,
     TEX_LAVA,
     TEX_BEDROCK,
-    TEX_COUNT
+    TEX_IRON_ORE,
+    TEX_DIAMOND_ORE,
+    TEX_COUNT,
 } VoxelTexture;
 
 inline int voxelTexUnit(VoxelTexture tex) { return VOXEL_TEX_UNIT + tex; }

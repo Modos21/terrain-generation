@@ -63,6 +63,8 @@ static void loadVoxelTextures(void) {
     loadTexture2D(TEX_WATER, RESOURCE_PATH "tex/water.png");
     loadTexture2D(TEX_LAVA, RESOURCE_PATH "tex/lava.png");
     loadTexture2D(TEX_BEDROCK, RESOURCE_PATH "tex/bedrock.png");
+    loadTexture2D(TEX_IRON_ORE, RESOURCE_PATH "tex/iron_ore.png");
+    loadTexture2D(TEX_DIAMOND_ORE, RESOURCE_PATH "tex/diamond_ore.png");
 }
 
 static void uploadVoxelTextures(void) {
@@ -76,6 +78,8 @@ static void uploadVoxelTextures(void) {
     shader_setInt(g_terrainShader, "u_texWater", voxelTexUnit(TEX_WATER));
     shader_setInt(g_terrainShader, "u_texLava", voxelTexUnit(TEX_LAVA));
     shader_setInt(g_terrainShader, "u_texBedrock", voxelTexUnit(TEX_BEDROCK));
+    shader_setInt(g_terrainShader, "u_texIronOre", voxelTexUnit(TEX_IRON_ORE));
+    shader_setInt(g_terrainShader, "u_texDiamondOre", voxelTexUnit(TEX_DIAMOND_ORE));
 }
 
 void shader_init(void) {
