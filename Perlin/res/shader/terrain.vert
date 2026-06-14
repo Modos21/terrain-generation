@@ -7,13 +7,13 @@ layout(location = 3) in uint aType;
 
 uniform mat4 u_mvpMatrix;
 
-out vec3 vNormal;
+out vec3 vNormal_ms;
 out vec2 vUV;
 flat out uint vType;
 
 void main() {
     gl_Position = u_mvpMatrix * vec4(aPos, 1.0);
-    vNormal = aNorm;
+    vNormal_ms = aNorm;
     vUV = aUV;
     vType = aType;
 }

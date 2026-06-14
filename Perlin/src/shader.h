@@ -43,6 +43,10 @@ void shader_reload(void);
 
 void shader_setMVP(mat4 mvp);
 
+void shader_setMV(mat4 mv);
+
+void shader_setV(mat4 v);
+
 void shader_setNoisePlaneData(InputData *data);
 
 void shader_setNoiseGuiData(void);

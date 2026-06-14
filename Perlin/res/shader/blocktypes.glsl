@@ -1,3 +1,5 @@
+#pragma once
+
 #define AIR 0u
 #define GRASS 1u
 #define GRASS_SIDE 2u

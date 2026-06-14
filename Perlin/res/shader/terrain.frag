@@ -2,7 +2,7 @@
 
 #include "blocktypes.glsl"
 
-in vec3 vNormal;
+in vec3 vNormal_ms;
 in vec2 vUV;
 flat in uint vType;
 
@@ -51,7 +51,7 @@ void main() {
 
     // Einfaches Directional Light
     vec3 lightDir = normalize(vec3(1.0, 2.0, 1.0));
-    float diff    = (vType == WATER) ? 1.0 : max(dot(normalize(vNormal), lightDir), 0.0);
+    float diff    = (vType == WATER) ? 1.0 : max(dot(normalize(vNormal_ms), lightDir), 0.0);
     float ambient = 0.35;
     color *= (ambient + diff * 0.65);
 

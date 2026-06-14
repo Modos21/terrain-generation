@@ -215,6 +215,14 @@ void shader_setMVP(mat4 mvp) {
     shader_setMat4(g_activeShader, "u_mvpMatrix", (mat4*)mvp);
 }
 
+void shader_setMV(mat4 mv) {
+    shader_setMat4(g_activeShader, "u_mvMatrix", (mat4*)mv);
+}
+
+void shader_setV(mat4 v) {
+    shader_setMat4(g_activeShader, "u_vMatrix", (mat4*)v);
+}
+
 void shader_setNoisePlaneData(InputData* data) {
     shader_setInt(g_noiseShader, "u_noiseTex", NOISE_TEX_UNIT);
     shader_setBool(g_noiseShader, "u_doDisplacement", data->doDisplacement);

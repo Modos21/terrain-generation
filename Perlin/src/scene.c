@@ -40,9 +40,6 @@ static void drawTerrain(void) {
     {
         mat4 mvp;
         scene_getMVP(mvp);
-
-        scene_scale(0.1f, 0.1f, 0.1f);
-
         shader_setMVP(mvp);
 
         mesh_drawChunkMesh(g_terrain);
