@@ -54,10 +54,6 @@ uint getBlock(int x, int y, int z) {
     }
 }
 
-uint getBlockX(int x, int y, int z) {
-    return DS_IRON_ORE;
-}
-
 void main() {
     ivec3 pos = ivec3(gl_GlobalInvocationID);
     ivec3 size = imageSize(result);
